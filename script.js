@@ -13,10 +13,10 @@ let config = {
 
     CAPTURE_RESOLUTION: 512, //Defines the pixel resolution of the screenshot saved when the "take screenshot" function is used.
 
-    DENSITY_DISSIPATION: 1, //Determines how quickly the colors fade over time. 
+    DENSITY_DISSIPATION: 1.2, //Determines how quickly the colors fade over time. 
     // A value of 0 means the colors never fade, while higher values make the dye disappear faster.
 
-    VELOCITY_DISSIPATION: 0.6,//This controls how quickly the fluid's motion slows down, similar to viscosity or friction. 
+    VELOCITY_DISSIPATION: 0.5,//This controls how quickly the fluid's motion slows down, similar to viscosity or friction. 
     // A higher value will make the fluid seem thicker and stop moving sooner.
 
     PRESSURE: 0.8, //Affects the internal pressure of the fluid. 
@@ -53,7 +53,7 @@ let config = {
     BLOOM_RESOLUTION: 256,// The resolution of the texture used to create the bloom.
     //  Lower resolutions create a softer, more diffuse glow and are less demanding on performance.
 
-    BLOOM_INTENSITY: 0.5,//A multiplier for the brightness of the bloom effect.
+    BLOOM_INTENSITY: 0.4,//A multiplier for the brightness of the bloom effect.
 
     BLOOM_THRESHOLD: 0.4,//Sets the brightness cutoff. Only parts of the fluid that are brighter than this value will glow.
 
