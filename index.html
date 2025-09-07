@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="Cache-Control" content="no-cache">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <title>SKY-Walk</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+        <style>
+            * {
+                user-select: none;
+            }
+
+            html, body {
+                overflow: hidden;
+                background-color: #000;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                perspective: 1000px; 
+            }
+
+            #scene-container {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                transform-style: preserve-3d;
+                transition: transform 0.4s ease-out, opacity 0.4s ease-in; 
+            }
+
+            #scene-container.zoom-in {
+                transform: translateZ(400px);
+                opacity: 0;
+            }
+
+            canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            .button-container {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 10;
+                transition: opacity 0.1s ease-out;
+            }
+            
+            .button-container.hidden {
+                opacity: 0;
+            }
+
+            .transition-button {
+                display: inline-block;
+                font-family: 'Orbitron', sans-serif;
+                font-size: 1.5rem;
+                color: white;
+                background-color: transparent;
+                border: 2px solid white;
+                border-radius: 15px;
+                padding: 15px 30px;
+                text-decoration: none;
+                cursor: pointer;
+                /* Added transition for the button's transform property */
+                transition: transform 0.2s ease-out;
+            }
+            
+            /* The hover effect now targets the entire button */
+            .transition-button:hover {
+                transform: translateY(-4px); /* A subtle 4-pixel lift */
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="scene-container">
+            <canvas></canvas>
+            <div class="button-container">
+                <a href="space.html" id="transitionLink" class="transition-button">Enter Space</a>
+            </div>
+        </div>
+
+        <script src="./script.js"></script>
+
+        <script>
+            document.getElementById('transitionLink').addEventListener('click', function(event) {
+                event.preventDefault(); 
+                
+                const buttonContainer = document.querySelector('.button-container');
+                const sceneContainer = document.getElementById('scene-container');
+                
+                buttonContainer.classList.add('hidden');
+                sceneContainer.classList.add('zoom-in');
+                
+                setTimeout(function() {
+                    window.location.href = event.target.href;
+                }, 400);
+
+            });
+        </script>
+    </body>
+</html>
