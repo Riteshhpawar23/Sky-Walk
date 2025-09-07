@@ -1,3 +1,81 @@
+// --- SUN LOADING LOGIC ---
+let sunModel = null;
+let cameraAnimating = false;
+let bloomPass = null;
+function showSun() {
+  // Hide button and SPACEWALK text
+  const btn = document.getElementById('dive-btn');
+  const afterBang = document.getElementById('spacewalk-afterbang');
+  if (btn) btn.style.display = 'none';
+  if (afterBang) afterBang.style.display = 'none';
+  // Show or load sun
+  function focusCameraOnSun() {
+    // Start camera far away and animate to sun
+    cameraAnimating = true;
+    let start = { x: 0, y: 0, z: 600 };
+  let end = { x: 0, y: 0, z: 270 };
+    // Instantly move camera to start if not already there
+    camera.position.set(start.x, start.y, start.z);
+    if (controls) controls.target.set(0,0,0);
+    camera.lookAt(0,0,0);
+    let duration = 1800; // ms
+    let startTime = performance.now();
+    function animateCamera(now) {
+      let t = Math.min((now - startTime) / duration, 1);
+      // Ease in-out
+      t = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+      camera.position.x = start.x + (end.x - start.x) * t;
+      camera.position.y = start.y + (end.y - start.y) * t;
+      camera.position.z = start.z + (end.z - start.z) * t;
+      camera.lookAt(0,0,0);
+      if (controls) controls.target.set(0,0,0);
+      if (t < 1) {
+        requestAnimationFrame(animateCamera);
+      } else {
+        cameraAnimating = false;
+        // Make the sun glow a little more when camera stops
+        if (bloomPass) {
+          bloomPass.strength = 1.5;
+          bloomPass.radius = 0.18;
+          bloomPass.threshold = 0.3;
+        }
+      }
+    }
+    requestAnimationFrame(animateCamera);
+  }
+  function reduceSunGlow() {
+    if (bloomPass) {
+      bloomPass.strength = 0.9;
+      bloomPass.radius = 0.1;
+      bloomPass.threshold = 0.5;
+    }
+  }
+  if (sunModel) {
+    sunModel.visible = true;
+    focusCameraOnSun();
+    reduceSunGlow();
+    return;
+  }
+  const loader = new THREE.GLTFLoader();
+  loader.load('sun/scene.gltf', function(gltf) {
+    sunModel = gltf.scene;
+    sunModel.position.set(0, 0, 0);
+    sunModel.scale.set(10, 10, 10); // Adjust scale as needed
+    scene.add(sunModel);
+    focusCameraOnSun();
+    reduceSunGlow();
+  }, undefined, function(error) {
+    console.error('Error loading sun model:', error);
+  });
+}
+
+// Add event listener for the button after DOM is ready
+window.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('dive-btn');
+  if (btn) {
+    btn.addEventListener('click', showSun);
+  }
+});
 // --------------------------------------------------------------------------------
 // Global variables for scene, camera, renderer, controls, and simulation objects.
 // --------------------------------------------------------------------------------
@@ -65,7 +143,7 @@ function init() {
   composer = new THREE.EffectComposer(renderer);
   let renderPass = new THREE.RenderPass(scene, camera);
   composer.addPass(renderPass);
-  let bloomPass = new THREE.UnrealBloomPass(
+  bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
     params.bloomStrength,
     params.bloomRadius,
