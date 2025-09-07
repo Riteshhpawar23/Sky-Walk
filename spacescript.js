@@ -9,6 +9,7 @@ let params; // Object to store simulation parameters
 let clock = new THREE.Clock(); // Clock to keep track of elapsed time
 
 // Initialize the scene and start the animation loop.
+
 init();
 animate();
 
@@ -180,10 +181,42 @@ function animate() {
   // Update the positions of the explosion particles.
   updateParticles(delta);
 
-  // After 10 seconds, add a galaxy cluster.
+  // After 3 seconds, add a galaxy cluster and show SPACEWALK text
   let elapsed = clock.elapsedTime;
-  if (elapsed > 10 && !galaxySystem) {
+
+  if (elapsed > 6 && !galaxySystem) {
     createGalaxyCluster();
+    // Show animated SPACEWALK text in Astronoma font after Big Bang
+    const afterBang = document.getElementById('spacewalk-afterbang');
+    if (afterBang && !afterBang.hasChildNodes()) {
+      const text = 'SPACEWALK';
+      const directions = ['from-top','from-bottom','from-left','from-right','from-top','from-bottom','from-left','from-right','from-top','from-bottom'];
+      afterBang.innerHTML = '';
+      for (let i = 0; i < text.length; i++) {
+        const span = document.createElement('span');
+        span.textContent = text[i];
+        span.className = `letter ${directions[i % directions.length]}`;
+        afterBang.appendChild(span);
+      }
+      // Try to ensure Astronoma font is loaded before showing
+      document.fonts && document.fonts.load('1em Astronoma').then(() => {
+        afterBang.style.opacity = 1;
+        setTimeout(() => {
+          const letters = afterBang.querySelectorAll('.letter');
+          letters.forEach((letter, idx) => {
+            setTimeout(() => {
+              letter.style.opacity = 1;
+              letter.style.transform = 'translate(0,0)';
+            }, idx * 220);
+          });
+        }, 200);
+        // Show button after text animates in
+        setTimeout(() => {
+          const btn = document.getElementById('dive-btn');
+          if (btn) btn.style.display = 'block';
+        }, 2400);
+      });
+    }
   }
 
   // Update camera controls.
